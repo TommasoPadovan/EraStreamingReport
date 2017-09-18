@@ -398,10 +398,52 @@ RTMP creato appositamente dagli autori.
 
 
 \section{Introduzione}
+	Lo scopo del progetto è quello di permettere all'utenza di riceve assistenza
+	remota per un ventaglio quanto più possibile vasto di ambiti.
+	Chi ha bisogno di supporto per una qualsiasi mansione avrà la possibilità
+	di collegarsi con un tecnico competente che potrà, tramite \textit{streaming} video,
+	supervisionare il lavoro e dare istruzioni per portarlo a termine.
 
-	\subsection{Motivazioni}
+	\subsection{Target}
+		Il target naturale per questo genere di applicazioni dovrebbe essere quello degli
+		\textit{smart-glasses}, o comunque dispositivi \textit{wearable}. Essi infatti
+		permetto di operare a mani libere e di avere un punto di vista preferenziale per
+		il tutor.\\
+		Durante le fasi preliminari di questo progetto, pertanto, è stato condotto uno studio
+		di fattibilità, riguardante in particolare i dispositivi \textit{wearable}: essi si sono 
+		però dimostrati una tecnologia ancora non sufficientemente matura. dal punto di vista
+		\textit{Hardware}:
+		\begin{itemize}
+			\item Durata insufficiente della batteria.
+			\item Surriscaldamento.
+			\item Limitata potenza di calcolo, e quindi di compressione dell'immagine.
+			\item Scarsa qualità della fotocamera.
+		\end{itemize}
+		Ma anche \textit{Software}:
+		\begin{itemize}
+			\item La maggior parte dei dispositivi supporta una versione ridotta di Android KitKat 4.4,
+			\item La maggior parte dei dispositivi non supporta le nuove API per gestire la camera, e 
+			fa utilizzo di API precedenti deprecate negli altri dispositivi.
+		\end{itemize}
+		Per questi motivi dunque si è scelto di sviluppare l'applicazione per smartphone, lasciando
+		il \textit{porting} o lo sviluppo di una \textit{companion-app} per un momento futuro.
+
+	\subsection{Motivazioni e Contesto}
+		Il \textit{concept} applicazione è nato per utilizzo in ambito professionale,
+		ad esempio per diminuire il numero di trasferte per riparazione di macchinari oppure per 
+		riceve veloce supporto in operazioni critiche in cui non c'è tempo o possibilità di attendere
+		l'arrivo di un tecnico specializzato. In generale nel contesto dell'industria 4.0 servizi di questo
+		genere saranno sempre più richiesti in quanto sempre più dispositivi saranno connessi alla rete
+		e quindi manutenuti da remoto, per gli altri di certo, ci sarà necessità di una assistenza altrettanto
+		immediata.\\
+		Tale servizio, però, potrebbe prendere piede anche in ambito \textit{consumer}: sostituire lo schermo dello smartphone, 
+		sostituire la batteria danneggiata di un laptop, riparare un piccolo elettrodomestico e molto altro
+		sono esigenze all'ordine del giorno.
+		Per queste motivazioni è stato deciso di intraprendere questo progetto sviluppando non solo un sistema
+		efficiente di \textit{streaming}, ma anche una interfaccia semplice ed immediata per consentire a tutte
+		le fasce di utenza di accedervi. Inoltre sarà possibile in futuro salvare le sessioni di assistenza sul 
+		server creando così un database di contenuti e di \textit{know-how} autogenerati.
 				
-	\subsection{Contesto}
 
 % no \IEEEPARstart
 % You must have at least 2 lines in the paragraph with the drop letter
@@ -422,6 +464,11 @@ RTMP creato appositamente dagli autori.
 
 
 \section{Conclusioni}
+	
+	\subsection{Risultati}
+
+	\subsection{Sviluppi futuri}
+
 	
 
 
