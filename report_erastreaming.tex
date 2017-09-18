@@ -454,6 +454,16 @@ RTMP creato appositamente dagli autori.
 
  
 \section{Proposta di soluzione}
+	La parte di \textit{hub} e quella di streaming sono state sviluppate in maniera completamente indipendente.
+	Si è deciso di mantenerle distaccate il più possibile per due ragioni principali:
+	\begin{itemize}
+		\item La parte di streaming deve essere un prodotto indipendente: alcuni \textit{wearable} potrebbero
+		non avere uno schermo (e.g. i \textit{Google Glass}) o potrebbero avere altre limitazioni.
+		\item Le due componenti hanno esigenze computazionali molto diverse: la prima ha bisogno di indicizzare e gestire velocemente
+		grandi liste di danti, mentre la seconda deve avere una infrastruttura per gestire lunghi \textit{burst} e di uno spazio
+		di dimensioni di archiviazioni maggiori.
+	\end{itemize}
+	Nelle sezioni seguenti verranno esposte nel dettaglio queste due componenti.
 
 	\subsection{Social}
 
