@@ -52,6 +52,7 @@
 
 \documentclass[conference]{IEEEtran}
 \usepackage[utf8]{inputenc}
+\usepackage{calrsfs}
 % Some Computer Society conferences also require the compsoc mode option,
 % but others use the standard conference format.
 %
@@ -518,7 +519,36 @@ RTMP creato appositamente dagli autori.
 			Si prenda in considerazione il problema di trovare tutti gli ID degli "amici" di un determinato utente:
 			se il database fosse strutturato con un nodo \textit{json} che contiene coppie di utenti tra loro "amici" (come in un classico SQL)
 			per ottenere tale lista sarebbe necessario un tempo lineare nella dimensione del database, mentre aggiungendo ad ogni utente
-			la lista degli id dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.
+			la lista degli id dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.\\
+			Per gestire in maniera controllata questa ridondanza ed i problemi di sicurezza che ne conseguono è necessario del codice
+			lato server. \textit{Firebase} fornisce una fuzionalità chiamata \textit{Firebase Functions} che permette esattamente
+			di fare questo; sempre in un contesto serverless è possibile caricare del codice \textit{nodeJS} che viene eseguito
+			in riposta ad eventi legati al database oppure in riposta a delle richieste \textit{GET} ad un determinato 
+			\textit{end-point http}.
+
+		\subsubsection{Notifiche}
+			Le notifiche sono un altro aspetto molto importante per questo genere di applicazioni. Ad esempio devono essere mandate
+			all'utente quando riceve un nuovo messaggio di chat, oppure quando ha un nuova richiesta di amicizia e così via.\\
+			Ancora una volta per la gestione delle notifiche push è stato scelto un servizio Google denominato \textit{Firebase Cloud Messagging} o FCM.
+			Ad ogni utente \textit{Firebase} viene associato automaticamente un token identificativo, esso può essere usato per inviare
+			\textit{push message}. Inoltre gruppi di utenti possono sottoscriversi a \textit{topic} e possono ricevere notifiche push
+			riguardo ai loro argomenti di interesse.\\
+			Nel prodotto presentato questa funzione è stata implementata unendo \textit{Firebase Database}, \textit{Firebase Functions} e il \textit{Cloud Messagging}.
+			Non è indicato che un utente abbia accesso al token FCM di un altro, perché creerebbe grossi problemi di sicurezza; pertanto
+			l'invio di notifiche push da parte di un utente $\mathcal{A}$ verso un altro utente $\mathcal{B}$ (come nel caso di una richiesta di amicizia)
+			è stato strutturato come segue:
+			\begin{itemize}
+				\item \textbf{Push request:} L'utente $\mathcal{A}$ aggiunge un nodo (contenente tutti i dati della notifica) al database in una tabella speciale ad esempio
+					\texttt{/pushQueues/friendRequests}. È una semplice scrittura su database, $\mathcal{A}$ a questo punto non deve fare altro.
+				\item \textbf{Sanity check:} Il nodo sopra citato è "speciale" in quando ha una \textit{Firebase Function} registrata come \textit{observer}.
+					Questa funzione ad ogni nuova scrittura in \texttt{pushQueues} legge i dati della richiesta di notifica push, verifica che $\mathcal{A}$ abbia
+					i corretti permessi per mandare una notifica a $\mathcal{B}$ e in caso affermativo legge nel database l'FCM-token di $\mathcal{B}$.
+				\item \textbf{Push notification:} Se la funzione del passo precedente termina con esito positivo allora viene chiamato il servizio FCM, che si occupa
+					di inviare un \textit{Firebase Message} al corretto dispositivo (o gruppo di dispositivi).
+				\item \textbf{Ricezione:} Il client installato sul dispositivo dell'utente $\mathcal{B}$ riceve il messaggio tramite un \textit{service} e notifica
+					l'utente in base alle sue impostazioni sulle notifiche.
+			\end{itemize}
+
 
 
 	\subsection{Streaming}
