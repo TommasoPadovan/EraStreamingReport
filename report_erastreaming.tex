@@ -552,6 +552,25 @@ RTMP creato appositamente dagli autori.
 
 
 	\subsection{Streaming}
+		Per lo streaming real-time di video e audio non sono state reperite librerie open-source gratuite.
+		Inoltre l'applicazione si propone di potersi interfacciare in futuro con devices quali smart-glasses,
+		quindi è richiesto un profondo controllo su tale funzionalità. Il tutto è stato realizzato utilizzando API native di Android.
+
+		\subsubsection{Risorse utilizzate}
+			Per la codifica e decodifica di audio e video Android fornisce la classe \texttt{MediaCodec}, capace di interfacciarsi con coder e decoder sia software che hardware e permette di specificare il formato di coding desiderato e di impostarne i parametri per regolare il livello di compressione. Per la comunicazione real-time si sono scelti gli standard h.264 AVC per il video e AAC per l'audio, in quanto permettono di comprimere molto i dati per diminuire il carico di rete.
+			Per utilizzare la fotocamera si è deciso di esplorare e sperimentare le nuove API Camera2 di Android, mentre l'audio viene gestito tramite le classi AudioRecord e AudioTrack rispettivamente per cattura e riproduzione.
+			La compressione richiede un carico di lavoro molto elevato e per tempo prolungato in quanto bisogna costantemente fornire dei buffer ai coder e utilizzare i buffer ritornati, il tutto in tempo reale. A questo scopo i costrutti Android per gestire operazioni asincrone non sono risultati sufficienti e si è deciso di utilizzare i più "leggeri" Thread di Java. 
+			Per il networking si è deciso di operare tramite Socket Java utilizzando come protocollo per lo streaming un RTP-like da noi implementato. Per la connessione tramite server è già disposto un cambiamento, quindi tutta la parte di networking è realizzata seguendo il \textit{design pattern Strategy}.
+
+		\subsubsection{Funzionalità}
+			Lo streaming realtime è funzionante e consente una comunicazione fluida su rete locale, non è stato ancora testato utilizzando un server remoto. L'interfaccia utente mette a disposizione il video ricevuto e una piccola finestra per visualizzare ciò che sta riprendendo. Per il momento si è scelto di mettere a disposizione solo la fotocamera frontale in quanto lo scopo è quello di mostrare ciò che l'utente sta facendo in fronte a lui, in futuro sarà implementato anche il cambio fotocamera (quando disponibile).
+			La comunicazione è gestita tramite protocollo TCP il quale, nonostante sia più lento rispetto ad UDP, semplifica enormemente la connettività ed è più indicato per dispositivi mobili. Anche se non è stato ancora implementato lato utente è già possibile modificare la qualità del video per rispondere alle costrizioni della rete.
+
+		\subsubsection{Problemi Riscontrati}
+			\begin{itemize}
+				\item Implementare una videochiamata real-time utilizzando API di basso livello si è dimostrata un operazione difficile ma al termine lascia un controllo completo e rende possibile la portabilità su tecnologie wearable.
+				\item Android risulta avere un problema irrisolto per quanto riguarda la latenza dell'audio, portando ad una round-trip latency (tempo intercorso tra l'acquisizione e la riproduzione del suono) molto più elevata rispetto ad altri sistemi.
+			\end{itemize}
 
 
 
@@ -704,10 +723,10 @@ RTMP creato appositamente dagli autori.
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
+%\section*{Acknowledgment}
 
 
-The authors would like to thank...
+%The authors would like to thank...
 
 
 
@@ -737,18 +756,18 @@ The authors would like to thank...
 % (used to reserve space for the reference number labels box)
 
 
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-	0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
-
-
-
-
-% that's all folks
+%\begin{thebibliography}{1}
+%
+%\bibitem{IEEEhowto:kopka}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%	0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+%
+%\end{thebibliography}
+%
+%
+%
+%
+%% that's all folks
 \end{document}
 
 
