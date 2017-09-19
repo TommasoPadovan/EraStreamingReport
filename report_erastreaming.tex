@@ -466,6 +466,60 @@ RTMP creato appositamente dagli autori.
 	Nelle sezioni seguenti verranno esposte nel dettaglio queste due componenti.
 
 	\subsection{Social}
+		Questa macro-componente del sistema si occupa di interfacciarsi con l'utente, raccogliere informazioni, far incontrare l'utente con
+		il tutor adatto e passare i dati dei dispositivi da far comunicare alla macro-componente di streaming.
+		Inoltre fornisce una \textit{real-time chat} ed un sistema di \textit{rating}.\\
+		Un aspetto centrale di questa componente è il coinvolgimento dell'utenza. Per questo si è cercato di tenere il \textit{client} il quanto
+		più possibile semplice e reattivo.\\
+		La tecnologia predominante usata in questa parte è la \textit{suite Firebase}.
+		
+		\subsubsection{Firebase}
+		\begin{itemize}
+			\item \textbf{Realtime - noSQL}
+				\textit{Firebase Database} è il database consigliato dalle \textit{best-practices} Android. È un database di tipo noSQL
+				che salva i dati in formato \textit{json}. Ha un ottima integrazione con il \textit{framework} Android in quando permette
+				di salvare e leggere dati direttamente come oggetti Java.\\
+				Non solo permette, ma costringe	lo sviluppatore a leggere i dati in maniera asincrona tramite \textit{listener design pattern}. Ciò si riflette
+				in una ottima reattività del prodotto, in quanto tutti i dati sono aggiornati in maniera istantanea non appena essi
+				vengono modificati sul database senza bisogno di \textit{refresh} o altre azioni da parte dell'utente.\\
+			
+			\item \textbf{Serverless}
+				Questa \textit{suite} incoraggia una architettura \textit{serverless}: ovvero non necessita di un server fisico e statico.
+				Il database e qualsiasi altra infrastruttura sono \textit{hostati} dai server Google e la quantità di spazio disco, 
+				banda, CPU etc. viene modificata dinamicamente a seconda del carico a cui l'applicazione è sottoposta.
+		\end{itemize}
+		\subsubsection{Struttura generale}
+			L'applicazione è stata realizzata nativamente per Android. L'aspetto centrale è la figura dell'utente che ha il suo profilo
+			con nome, cognome, email, foto, biografia e lista di competenze. La caratterizzazione dell'utente potrà essere facilmente
+			incrementata nel futuro perché è stata implementata con la massima flessibilità.\\
+			Ogni utente inoltre può cercare nel database altri profili in base alle competenze necessarie, ma anche per nome o email.\\
+			Una volta trovato il tutor cercato è possibile aggiungerlo alla propria rete di contatti: una volta che la richiesta viene
+			accettata sarà possibile accordarsi tramite chat e poi far partire una sessione di supporto video. Ovviamente è possibile
+			anche rimuovere un contatto indesiderato.\\
+			Ogni utente può modificare il proprio profilo in ogni momento; per migliorare la qualità dei profili disponibili
+			al primo login viene chiesto di fornire alcuni dati personali.\\
+			Per mantenere una buona qualità delle sessioni di assistenza, è messa a disposizione una funzione di recensione degli utenti.
+
+		\subsubsection{Realtime chat}
+			La chat in tempo reale è uno dei più importanti requisiti di questa parte, deve essere semplice, immediata e fruibile.
+			La soluzione proposta usa nativamente \textit{Firebase} sfruttando la sua natura real-time.\\
+			Ad ogni coppia di utenti viene assegnato un codice univoco di una stanza di chat che non è altro che un nodo particolare
+			dell'albero \textit{json} presente nel database a cui entrambi hanno permessi di lettura e scrittura. Per inviare un nuovo
+			messaggio è sufficiente quindi che il client faccia la \textit{push} di un nuovo messaggio sul database. Per 
+			visualizzare la lista dei messaggi invece basta seguire ancora una volta il \textit{listener design pattern} e registrare
+			entrambi gli utenti alla lista degli ascoltatori di una particolare stanza di chat, il sistema Android quindi provvederà
+			automaticamente ed in tempo reale a tenere aggiornata la pagina con l'elenco dei messaggi.
+
+		\subsubsection{Rete dei contatti}
+			La relazione di "amicizia" o di "contatto" tra coppie di utenti è un classico \textit{use-case} per i database di tipo
+			relazionale; in un database di tipo noSQL apre una problematica molto diversa. \textit{Firebase} non fornisce
+			un servizio di database relazionale, quindi è necessario usare una struttura diversa e inevitabilmente introdurre
+			ridondanza.\\
+			Si prenda in considerazione il problema di trovare tutti gli ID degli "amici" di un determinato utente:
+			se il database fosse strutturato con un nodo \textit{json} che contiene coppie di utenti tra loro "amici" (come in un classico SQL)
+			per ottenere tale lista sarebbe necessario un tempo lineare nella dimensione del database, mentre aggiungendo ad ogni utente
+			la lista degli id dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.
+
 
 	\subsection{Streaming}
 
