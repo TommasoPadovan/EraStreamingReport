@@ -440,7 +440,7 @@ RTMP creato appositamente dagli autori.
 		Tale servizio, però, potrebbe prendere piede anche in ambito \textit{consumer}: sostituire lo schermo dello smartphone, 
 		sostituire la batteria danneggiata di un laptop, riparare un piccolo elettrodomestico e molto altro
 		sono esigenze all'ordine del giorno.
-		Per queste motivazioni è stato deciso di intraprendere questo progetto sviluppando non solo un sistema
+		Per tali motivazioni è stato deciso di intraprendere questo progetto sviluppando non solo un sistema
 		efficiente di \textit{streaming}, ma anche una interfaccia semplice ed immediata per consentire a tutte
 		le fasce di utenza di accedervi. Inoltre sarà possibile in futuro salvare le sessioni di assistenza sul 
 		server creando così un database di contenuti e di \textit{know-how} autogenerati.
@@ -462,11 +462,11 @@ RTMP creato appositamente dagli autori.
 		non avere uno schermo (e.g. i \textit{Google Glass}) o potrebbero avere altre limitazioni.
 		\item Le due componenti hanno esigenze computazionali molto diverse: la prima ha bisogno di indicizzare e gestire velocemente
 		grandi liste di danti, mentre la seconda deve avere una infrastruttura per gestire lunghi \textit{burst} e di uno spazio
-		di dimensioni di archiviazioni maggiori.
+		di archiviazione maggiore.
 	\end{itemize}
 	Nelle sezioni seguenti verranno esposte nel dettaglio queste due componenti.
 
-	\subsection{Social}
+	\subsection{Hub}
 		Questa macro-componente del sistema si occupa di interfacciarsi con l'utente, raccogliere informazioni, far incontrare l'utente con
 		il tutor adatto e passare i dati dei dispositivi da far comunicare alla macro-componente di streaming.
 		Inoltre fornisce una \textit{real-time chat} ed un sistema di \textit{rating}.\\
@@ -514,13 +514,13 @@ RTMP creato appositamente dagli autori.
 		\subsubsection{Rete dei contatti}
 			La relazione di "amicizia" o di "contatto" tra coppie di utenti è un classico \textit{use-case} per i database di tipo
 			relazionale; in un database di tipo noSQL apre una problematica molto diversa. \textit{Firebase} non fornisce
-			un servizio di database relazionale, quindi è necessario usare una struttura diversa e inevitabilmente introdurre
+			un servizio di database relazionale, quindi è necessario usare una struttura diversa e, inevitabilmente, introdurre
 			ridondanza.\\
 			Si prenda in considerazione il problema di trovare tutti gli ID degli "amici" di un determinato utente:
 			se il database fosse strutturato con un nodo \textit{json} che contiene coppie di utenti tra loro "amici" (come in un classico SQL)
 			per ottenere tale lista sarebbe necessario un tempo lineare nella dimensione del database, mentre aggiungendo ad ogni utente
-			la lista degli id dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.\\
-			Per gestire in maniera controllata questa ridondanza ed i problemi di sicurezza che ne conseguono è necessario del codice
+			la lista degli \texttt{id}	 dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.\\
+			Per gestire in maniera controllata questa ridondanza ed evitare possibili anomalie è necessario del codice
 			lato server. \textit{Firebase} fornisce una fuzionalità chiamata \textit{Firebase Functions} che permette esattamente
 			di fare questo; sempre in un contesto serverless è possibile caricare del codice \textit{nodeJS} che viene eseguito
 			in riposta ad eventi legati al database oppure in riposta a delle richieste \textit{GET} ad un determinato 
@@ -533,13 +533,13 @@ RTMP creato appositamente dagli autori.
 			Ad ogni utente \textit{Firebase} viene associato automaticamente un token identificativo, esso può essere usato per inviare
 			\textit{push message}. Inoltre gruppi di utenti possono sottoscriversi a \textit{topic} e possono ricevere notifiche push
 			riguardo ai loro argomenti di interesse.\\
-			Nel prodotto presentato questa funzione è stata implementata unendo \textit{Firebase Database}, \textit{Firebase Functions} e il \textit{Cloud Messagging}.
+			Nel prodotto presentato questa funzione è stata implementata usando congiuntamente \textit{Firebase Database}, \textit{Firebase Functions} e il \textit{Cloud Messagging}.
 			Non è indicato che un utente abbia accesso al token FCM di un altro, perché creerebbe grossi problemi di sicurezza; pertanto
 			l'invio di notifiche push da parte di un utente $\mathcal{A}$ verso un altro utente $\mathcal{B}$ (come nel caso di una richiesta di amicizia)
 			è stato strutturato come segue:
 			\begin{itemize}
 				\item \textbf{Push request:} L'utente $\mathcal{A}$ aggiunge un nodo (contenente tutti i dati della notifica) al database in una tabella speciale ad esempio
-					\texttt{/pushQueues/friendRequests}. È una semplice scrittura su database, $\mathcal{A}$ a questo punto non deve fare altro.
+					\texttt{/pushQueues/friendRequests}. È una semplice scrittura su database; $\mathcal{A}$ a questo punto non deve fare altro.
 				\item \textbf{Sanity check:} Il nodo sopra citato è "speciale" in quando ha una \textit{Firebase Function} registrata come \textit{observer}.
 					Questa funzione ad ogni nuova scrittura in \texttt{pushQueues} legge i dati della richiesta di notifica push, verifica che $\mathcal{A}$ abbia
 					i corretti permessi per mandare una notifica a $\mathcal{B}$ e in caso affermativo legge nel database l'FCM-token di $\mathcal{B}$.
