@@ -50,8 +50,9 @@
 % http://www.michaelshell.org/tex/testflow/
 
 
-
 \documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{calrsfs}
 % Some Computer Society conferences also require the compsoc mode option,
 % but others use the standard conference format.
 %
@@ -116,22 +117,22 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../pdf/}{../jpeg/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+	% \usepackage[pdftex]{graphicx}
+	% declare the path(s) where your graphic files are
+	% \graphicspath{{../pdf/}{../jpeg/}}
+	% and their extensions so you won't have to specify these with
+	% every instance of \includegraphics
+	% \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
 \else
-  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
-  % will default to the driver specified in the system graphics.cfg if no
-  % driver is specified.
-  % \usepackage[dvips]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../eps/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.eps}
+	% or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+	% will default to the driver specified in the system graphics.cfg if no
+	% driver is specified.
+	% \usepackage[dvips]{graphicx}
+	% declare the path(s) where your graphic files are
+	% \graphicspath{{../eps/}}
+	% and their extensions so you won't have to specify these with
+	% every instance of \includegraphics
+	% \DeclareGraphicsExtensions{.eps}
 \fi
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
@@ -327,12 +328,12 @@
 % use a multiple column layout for up to three different
 % affiliations
 \author{\IEEEauthorblockN{Paolo Bonato}
-\IEEEauthorblockA{Universita' degli Studi di Padova \\
+\IEEEauthorblockA{Università degli Studi di Padova \\
 Email: paolo.bonato.12@gmail.com}
 \and
 \IEEEauthorblockN{Tommaso Padovan}
-\IEEEauthorblockA{Universita' degli Studi di Padova \\
-Email: tommaso.pado@gmail}}
+\IEEEauthorblockA{Università degli Studi di Padova \\
+Email: tommaso.pado@gmail.com}}
 
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
@@ -371,7 +372,13 @@ Email: tommaso.pado@gmail}}
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-The abstract goes here.
+Questo \textit{report} descrive l'applicazione ERAStreaming e le sue fasi di sviluppo. Si tratta di una applicazione 
+sviluppata nativamente per \textit{smartphone} Android che permettere ottenere assistenza da 
+remoto tramite \textit{Streaming}. Fornisce inoltre un \textit{hub} sociale che permette agli utenti
+di entrare in contatto per offrire o riceve assistenza.\\Per fornire alcuni servizi in tempo reale
+come la \textit{chat} o le recensioni degli utenti \textit{ERAStreaming} usa un database noSql real-time.
+Per quanto riguarda lo \textit{Streaming} invece fa uso di un server dedicato con un protocollo di tipo
+RTMP creato appositamente dagli autori.
 \end{abstract}
 
 % no keywords
@@ -391,25 +398,224 @@ The abstract goes here.
 
 
 
-\section{Introduction}
+\section{Introduzione}
+	Lo scopo del progetto è quello di permettere all'utenza di riceve assistenza
+	remota per un ventaglio quanto più possibile vasto di ambiti.
+	Chi ha bisogno di supporto per una qualsiasi mansione avrà la possibilità
+	di collegarsi con un tecnico competente che potrà, tramite \textit{streaming} video,
+	supervisionare il lavoro e dare istruzioni per portarlo a termine.
+
+	\subsection{Target}
+		Il target naturale per questo genere di applicazioni dovrebbe essere quello degli
+		\textit{smart-glasses}, o comunque dispositivi \textit{wearable}. Essi infatti
+		permetto di operare a mani libere e di avere un punto di vista preferenziale per
+		il tutor.\\
+		Durante le fasi preliminari di questo progetto, pertanto, è stato condotto uno studio
+		di fattibilità, riguardante in particolare i dispositivi \textit{wearable}: essi si sono 
+		però dimostrati una tecnologia ancora non sufficientemente matura. dal punto di vista
+		\textit{Hardware}:
+		\begin{itemize}
+			\item Durata insufficiente della batteria.
+			\item Surriscaldamento.
+			\item Limitata potenza di calcolo, e quindi di compressione dell'immagine.
+			\item Scarsa qualità della fotocamera.
+		\end{itemize}
+		Ma anche \textit{Software}:
+		\begin{itemize}
+			\item La maggior parte dei dispositivi supporta una versione ridotta di Android KitKat 4.4,
+			\item La maggior parte dei dispositivi non supporta le nuove API per gestire la camera, e 
+			fa utilizzo di API precedenti deprecate negli altri dispositivi.
+		\end{itemize}
+		Per questi motivi dunque si è scelto di sviluppare l'applicazione per smartphone, lasciando
+		il \textit{porting} o lo sviluppo di una \textit{companion-app} per un momento futuro.
+
+	\subsection{Motivazioni e Contesto}
+		Il \textit{concept} applicazione è nato per utilizzo in ambito professionale,
+		ad esempio per diminuire il numero di trasferte per riparazione di macchinari oppure per 
+		riceve veloce supporto in operazioni critiche in cui non c'è tempo o possibilità di attendere
+		l'arrivo di un tecnico specializzato. In generale nel contesto dell'industria 4.0 servizi di questo
+		genere saranno sempre più richiesti in quanto sempre più dispositivi saranno connessi alla rete
+		e quindi manutenuti da remoto, per gli altri di certo, ci sarà necessità di una assistenza altrettanto
+		immediata.\\
+		Tale servizio, però, potrebbe prendere piede anche in ambito \textit{consumer}: sostituire lo schermo dello smartphone, 
+		sostituire la batteria danneggiata di un laptop, riparare un piccolo elettrodomestico e molto altro
+		sono esigenze all'ordine del giorno.
+		Per tali motivazioni è stato deciso di intraprendere questo progetto sviluppando non solo un sistema
+		efficiente di \textit{streaming}, ma anche una interfaccia semplice ed immediata per consentire a tutte
+		le fasce di utenza di accedervi. Inoltre sarà possibile in futuro salvare le sessioni di assistenza sul 
+		server creando così un database di contenuti e di \textit{know-how} autogenerati.
+				
+
 % no \IEEEPARstart
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.8b and later.
 % You must have at least 2 lines in the paragraph with the drop letter
 % (should never be an issue)
-I wish you the best of success.
 
-\hfill mds
+
+
+
  
-\hfill August 26, 2015
+\section{Proposta di soluzione}
+	La parte di \textit{hub} e quella di streaming sono state sviluppate in maniera completamente indipendente.
+	Si è deciso di mantenerle distaccate il più possibile per due ragioni principali:
+	\begin{itemize}
+		\item La parte di streaming deve essere un prodotto indipendente: alcuni \textit{wearable} potrebbero
+		non avere uno schermo (e.g. i \textit{Google Glass}) o potrebbero avere altre limitazioni.
+		\item Le due componenti hanno esigenze computazionali molto diverse: la prima ha bisogno di indicizzare e gestire velocemente
+		grandi liste di danti, mentre la seconda deve avere una infrastruttura per gestire lunghi \textit{burst} e di uno spazio
+		di archiviazione maggiore.
+	\end{itemize}
+	Nelle sezioni seguenti verranno esposte nel dettaglio queste due componenti.
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+	\subsection{Hub}
+		Questa macro-componente del sistema si occupa di interfacciarsi con l'utente, raccogliere informazioni, far incontrare l'utente con
+		il tutor adatto e passare i dati dei dispositivi da far comunicare alla macro-componente di streaming.
+		Inoltre fornisce una \textit{real-time chat} ed un sistema di \textit{rating}.\\
+		Un aspetto centrale di questa componente è il coinvolgimento dell'utenza. Per questo si è cercato di tenere il \textit{client} il quanto
+		più possibile semplice e reattivo.\\
+		La tecnologia predominante usata in questa parte è la \textit{suite Firebase}.
+		
+		\subsubsection{Firebase}
+		\begin{itemize}
+			\item \textbf{Realtime - noSQL}
+				\textit{Firebase Database} è il database consigliato dalle \textit{best-practices} Android. È un database di tipo noSQL
+				che salva i dati in formato \textit{json}. Ha un ottima integrazione con il \textit{framework} Android in quando permette
+				di salvare e leggere dati direttamente come oggetti Java.\\
+				Non solo permette, ma costringe	lo sviluppatore a leggere i dati in maniera asincrona tramite \textit{listener design pattern}. Ciò si riflette
+				in una ottima reattività del prodotto, in quanto tutti i dati sono aggiornati in maniera istantanea non appena essi
+				vengono modificati sul database senza bisogno di \textit{refresh} o altre azioni da parte dell'utente.\\
+			
+			\item \textbf{Serverless}
+				Questa \textit{suite} incoraggia una architettura \textit{serverless}: ovvero non necessita di un server fisico e statico.
+				Il database e qualsiasi altra infrastruttura sono \textit{hostati} dai server Google e la quantità di spazio disco, 
+				banda, CPU etc. viene modificata dinamicamente a seconda del carico a cui l'applicazione è sottoposta.
+		\end{itemize}
+		\subsubsection{Struttura generale}
+			L'applicazione è stata realizzata nativamente per Android. L'aspetto centrale è la figura dell'utente che ha il suo profilo
+			con nome, cognome, email, foto, biografia e lista di competenze. La caratterizzazione dell'utente potrà essere facilmente
+			incrementata nel futuro perché è stata implementata con la massima flessibilità.\\
+			Ogni utente inoltre può cercare nel database altri profili in base alle competenze necessarie, ma anche per nome o email.\\
+			Una volta trovato il tutor cercato è possibile aggiungerlo alla propria rete di contatti: una volta che la richiesta viene
+			accettata sarà possibile accordarsi tramite chat e poi far partire una sessione di supporto video. Ovviamente è possibile
+			anche rimuovere un contatto indesiderato.\\
+			Ogni utente può modificare il proprio profilo in ogni momento; per migliorare la qualità dei profili disponibili
+			al primo login viene chiesto di fornire alcuni dati personali.\\
+			Per mantenere una buona qualità delle sessioni di assistenza, è messa a disposizione una funzione di recensione degli utenti.
+
+		\subsubsection{Realtime chat}
+			La chat in tempo reale è uno dei più importanti requisiti di questa parte, deve essere semplice, immediata e fruibile.
+			La soluzione proposta usa nativamente \textit{Firebase} sfruttando la sua natura real-time.\\
+			Ad ogni coppia di utenti viene assegnato un codice univoco di una stanza di chat che non è altro che un nodo particolare
+			dell'albero \textit{json} presente nel database a cui entrambi hanno permessi di lettura e scrittura. Per inviare un nuovo
+			messaggio è sufficiente quindi che il client faccia la \textit{push} di un nuovo messaggio sul database. Per 
+			visualizzare la lista dei messaggi invece basta seguire ancora una volta il \textit{listener design pattern} e registrare
+			entrambi gli utenti alla lista degli ascoltatori di una particolare stanza di chat, il sistema Android quindi provvederà
+			automaticamente ed in tempo reale a tenere aggiornata la pagina con l'elenco dei messaggi.
+
+		\subsubsection{Rete dei contatti}
+			La relazione di "amicizia" o di "contatto" tra coppie di utenti è un classico \textit{use-case} per i database di tipo
+			relazionale; in un database di tipo noSQL apre una problematica molto diversa. \textit{Firebase} non fornisce
+			un servizio di database relazionale, quindi è necessario usare una struttura diversa e, inevitabilmente, introdurre
+			ridondanza.\\
+			Si prenda in considerazione il problema di trovare tutti gli ID degli "amici" di un determinato utente:
+			se il database fosse strutturato con un nodo \textit{json} che contiene coppie di utenti tra loro "amici" (come in un classico SQL)
+			per ottenere tale lista sarebbe necessario un tempo lineare nella dimensione del database, mentre aggiungendo ad ogni utente
+			la lista degli \texttt{id}	 dei propri amici è possibile ottenere questa lista in \texttt{O(1)}.\\
+			Per gestire in maniera controllata questa ridondanza ed evitare possibili anomalie è necessario del codice
+			lato server. \textit{Firebase} fornisce una fuzionalità chiamata \textit{Firebase Functions} che permette esattamente
+			di fare questo; sempre in un contesto serverless è possibile caricare del codice \textit{nodeJS} che viene eseguito
+			in riposta ad eventi legati al database oppure in riposta a delle richieste \textit{GET} ad un determinato 
+			\textit{end-point http}.
+
+		\subsubsection{Notifiche}
+			Le notifiche sono un altro aspetto molto importante per questo genere di applicazioni. Ad esempio devono essere mandate
+			all'utente quando riceve un nuovo messaggio di chat, oppure quando ha un nuova richiesta di amicizia e così via.\\
+			Ancora una volta per la gestione delle notifiche push è stato scelto un servizio Google denominato \textit{Firebase Cloud Messagging} o FCM.
+			Ad ogni utente \textit{Firebase} viene associato automaticamente un token identificativo, esso può essere usato per inviare
+			\textit{push message}. Inoltre gruppi di utenti possono sottoscriversi a \textit{topic} e possono ricevere notifiche push
+			riguardo ai loro argomenti di interesse.\\
+			Nel prodotto presentato questa funzione è stata implementata usando congiuntamente \textit{Firebase Database}, \textit{Firebase Functions} e il \textit{Cloud Messagging}.
+			Non è indicato che un utente abbia accesso al token FCM di un altro, perché creerebbe grossi problemi di sicurezza; pertanto
+			l'invio di notifiche push da parte di un utente $\mathcal{A}$ verso un altro utente $\mathcal{B}$ (come nel caso di una richiesta di amicizia)
+			è stato strutturato come segue:
+			\begin{itemize}
+				\item \textbf{Push request:} L'utente $\mathcal{A}$ aggiunge un nodo (contenente tutti i dati della notifica) al database in una tabella speciale ad esempio
+					\texttt{/pushQueues/friendRequests}. È una semplice scrittura su database; $\mathcal{A}$ a questo punto non deve fare altro.
+				\item \textbf{Sanity check:} Il nodo sopra citato è "speciale" in quando ha una \textit{Firebase Function} registrata come \textit{observer}.
+					Questa funzione ad ogni nuova scrittura in \texttt{pushQueues} legge i dati della richiesta di notifica push, verifica che $\mathcal{A}$ abbia
+					i corretti permessi per mandare una notifica a $\mathcal{B}$ e in caso affermativo legge nel database l'FCM-token di $\mathcal{B}$.
+				\item \textbf{Push notification:} Se la funzione del passo precedente termina con esito positivo allora viene chiamato il servizio FCM, che si occupa
+					di inviare un \textit{Firebase Message} al corretto dispositivo (o gruppo di dispositivi).
+				\item \textbf{Ricezione:} Il client installato sul dispositivo dell'utente $\mathcal{B}$ riceve il messaggio tramite un \textit{service} e notifica
+					l'utente in base alle sue impostazioni sulle notifiche.
+			\end{itemize}
 
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+
+	\subsection{Streaming}
+		Per lo streaming real-time di video e audio non sono state reperite librerie open-source gratuite.
+		Inoltre l'applicazione si propone di potersi interfacciare in futuro con devices quali smart-glasses,
+		quindi è richiesto un profondo controllo su tale funzionalità. Il tutto è stato realizzato utilizzando API native di Android.
+
+		\subsubsection{Risorse utilizzate}
+			Per la codifica e decodifica di audio e video Android fornisce la classe \texttt{MediaCodec}, capace di interfacciarsi con coder e decoder sia software che hardware e permette di specificare il formato di coding desiderato e di impostarne i parametri per regolare il livello di compressione. Per la comunicazione real-time si sono scelti gli standard h.264 AVC per il video e AAC per l'audio, in quanto permettono di comprimere molto i dati per diminuire il carico di rete.
+			Per utilizzare la fotocamera si è deciso di esplorare e sperimentare le nuove API Camera2 di Android, mentre l'audio viene gestito tramite le classi AudioRecord e AudioTrack rispettivamente per cattura e riproduzione.
+			La compressione richiede un carico di lavoro molto elevato e per tempo prolungato in quanto bisogna costantemente fornire dei buffer ai coder e utilizzare i buffer ritornati, il tutto in tempo reale. A questo scopo i costrutti Android per gestire operazioni asincrone non sono risultati sufficienti e si è deciso di utilizzare i più "leggeri" Thread di Java. 
+			Per il networking si è deciso di operare tramite Socket Java utilizzando come protocollo per lo streaming un RTP-like da noi implementato. Per la connessione tramite server è già disposto un cambiamento, quindi tutta la parte di networking è realizzata seguendo il \textit{design pattern Strategy}.
+
+		\subsubsection{Funzionalità}
+			Lo streaming realtime è funzionante e consente una comunicazione fluida su rete locale, non è stato ancora testato utilizzando un server remoto. L'interfaccia utente mette a disposizione il video ricevuto e una piccola finestra per visualizzare ciò che sta riprendendo. Per il momento si è scelto di mettere a disposizione solo la fotocamera frontale in quanto lo scopo è quello di mostrare ciò che l'utente sta facendo in fronte a lui, in futuro sarà implementato anche il cambio fotocamera (quando disponibile).
+			La comunicazione è gestita tramite protocollo TCP il quale, nonostante sia più lento rispetto ad UDP, semplifica enormemente la connettività ed è più indicato per dispositivi mobili. Anche se non è stato ancora implementato lato utente è già possibile modificare la qualità del video per rispondere alle costrizioni della rete.
+
+		\subsubsection{Problemi Riscontrati}
+			\begin{itemize}
+				\item Implementare una videochiamata real-time utilizzando API di basso livello si è dimostrata un operazione difficile ma al termine lascia un controllo completo e rende possibile la portabilità su tecnologie wearable.
+				\item Android risulta avere un problema irrisolto per quanto riguarda la latenza dell'audio, portando ad una round-trip latency (tempo intercorso tra l'acquisizione e la riproduzione del suono) molto più elevata rispetto ad altri sistemi.
+			\end{itemize}
+
+
+
+
+
+\section{Conclusioni}
+	
+
+	\subsection{Sviluppi futuri}
+		Questo prodotto apre la strada per molti sviluppi futuri.\\
+		\subsubsection{Wearable}
+			Primo su tutti c'è il \textit{porting} per un adeguato dispositivo \textit{wearable}; sarà necessario
+			tenere conto della limitatezza dell'Hardware a disposizione e del diverso modo di interfacciarsi con l'utente.
+			Un possibile sviluppo in questo senso potrebbe essere una \textit{companion app}, ovvero un'applicazione che
+			deve coesistere con l'app per smartphone per integrare alcune funzionalità. Ad esempio si potrebbe sfruttare
+			la fotocamera di uno \textit{smarglass} per registrare il video lasciando le mani libere all'operatore.\\
+
+		\subsubsection{Tools per l'assistente}
+			Una migliore gestione da parte dell'assistente della sessione potrebbe essere un valore aggiunto notevole.
+			Potrebbero essere inseriti alcuni strumenti per il tutor come:
+			\begin{itemize}
+				\item Possibilità di far comparire a video appunti scritti per l'assistito.
+				\item Tracciare grafici o disegni/schemi a mano libera.
+				\item Poter scorrere avanti ed indietro	il video per trovare alcuni fermo immagine.
+				\item Tracciare/evidenziare parti del video live (ad esempio per far capire quale vite allentare)
+					e rappresentare questi dati a video per l'assistito, o addirittura in realtà aumentata in caso
+					di \textit{wearable}.
+			\end{itemize}
+
+		\subsubsection{Migliorie hub}
+			Alcuni aspetti della parte sociale dell'applicazione devono essere migliorati. Ad esempio serve
+			una maglia più fine per le categorie di competenza e un modo più user-friendly di raccoglierle.
+			Possono essere aggiunti aspetti di apprendimento automatico per suggerire agli utenti altri
+			utenti con cui probabilmente vorrebbero entrare in contatto.
+
+	\subsection{Risultati}
+		I risultati sono soddisfacenti. La parte di \textit{hub} si è rivelata semplice ma immediata, i dati sugli 
+		utenti vengono aggiornati in maniera real-time e la chat è perfettamente funzionante con un ritardo quasi
+		inesistente.\\
+		La parte di streaming ha un ottimo funzionamento e riesce a trasmettere video ad una buona qualità senza
+		ritardi apprezzabili e senza grande perdita di pacchetti. Le conversazioni audio sono anch'esse di buona
+		qualità e in ogni caso è possibile avere una sessione di assistenza completa e chiara.
+	
+
+
 
 
 % An example of a floating figure using the graphicx package.
@@ -509,8 +715,6 @@ Subsubsection text here.
 
 
 
-\section{Conclusion}
-The conclusion goes here.
 
 
 
@@ -519,10 +723,10 @@ The conclusion goes here.
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
+%\section*{Acknowledgment}
 
 
-The authors would like to thank...
+%The authors would like to thank...
 
 
 
@@ -550,18 +754,20 @@ The authors would like to thank...
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
 
 
-
-
-% that's all folks
+%\begin{thebibliography}{1}
+%
+%\bibitem{IEEEhowto:kopka}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%	0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+%
+%\end{thebibliography}
+%
+%
+%
+%
+%% that's all folks
 \end{document}
 
 
